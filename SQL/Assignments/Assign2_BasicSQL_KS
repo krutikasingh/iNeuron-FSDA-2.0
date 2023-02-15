@@ -2,8 +2,8 @@ use database demo_database2
 --------------------------- 1,2 ----------------------------
 create or replace table KS_Sales_Data_Final
 (
-  order_id	Varchar(30) Primary key,
-  order_date date,
+  order_id	Varchar(30) ,
+  order_date date Primary key,
   ship_date date,
   ship_mode	Varchar(30),
   customer_name	Varchar(30),
@@ -29,6 +29,12 @@ create or replace table KS_Sales_Data_Final
 desc table KS_Sales_Data_Final
 
 select * from KS_Sales_Data_Final
+
+alter table KS_Sales_Data_Final
+drop Primary key;
+
+alter table KS_Sales_Data_Final
+add Primary Key(Order_ID);
 ------------------------- Copied the table -----------------------------
 
 create or replace table KS_Sales_Data_Final_copy as
@@ -36,40 +42,40 @@ select * from KS_Sales_Data_Final;
 
 --------------------------- 3 ----------------------------
 
-select order_id as order_iidd,substring(order_iidd,9) as order_id_new from KS_Sales_Data_Final
+select order_id as order_iidd,substring(order_iidd,9) as order_extract from KS_Sales_Data_Final
 
-select * from KS_Sales_Data_Final_copy
+select * from KS_Sales_Data_Final_copy;
 
 alter table KS_Sales_Data_Final_Copy
-add column order_id_new varchar(110);
+add column order_extract varchar(110);
 
 update KS_Sales_Data_Final_Copy
-set order_id_new = (substrring(order_id,9));
+set order_extract = (substring(order_id,9));
 
 --------------------------- 4 ----------------------------
 select *,
    CASE WHEN DISCOUNT > '0' THEN 'YES'
-   ELSE 'FALSE'
-   END AS DISCOUNTED
-from KS_Sales_Data_Final;
+   ELSE 'NO'
+   END AS DISCOUNT_FLAG
+from KS_Sales_Data_Final_Copy;
 
-select * from KS_Sales_Data_Final_copy
+select * from KS_Sales_Data_Final_copy;
 
 alter table KS_Sales_Data_Final_copy
-add column DISCOUNTED varchar(10);
+add column DISCOUNT_FLAG varchar(5);
 
 update KS_Sales_Data_Final_copy
-set DISCOUNTED = 'YES' where  DISCOUNT > '0' 
+set DISCOUNT_FLAG = 'YES' where DISCOUNT > '0';
 
 update KS_Sales_Data_Final_copy
-set DISCOUNTED = 'FALSE' where  DISCOUNT <= '0' 
+set DISCOUNT_FLAG = 'NO' where  DISCOUNT <= '0';
 --------------------------- 5 ----------------------------
 
 select order_id,order_date,ship_date,
 DATEDIFF(day,order_date,ship_date) as Process_Days
 from KS_Sales_Data_Final;
 
-select * from KS_Sales_Data_Final_copy
+select * from KS_Sales_Data_Final_copy;
 
 alter table KS_Sales_Data_Final_copy
 add column Process_Days int;
@@ -78,14 +84,16 @@ update KS_Sales_Data_Final_copy
 set Process_Days=(DATEDIFF('Day',order_date,ship_date)) ;
 -----------------------------------------------------------
 
-select * from KS_Sales_Data_Final_copy
+select * from KS_Sales_Data_Final_copy;
 
-select *,
+alter table KS_Sales_Data_Final_copy
+add column rating int;
+
+update KS_Sales_Data_Final_copy
+set Rating=(
 Case
 When Process_days <= '3' Then '5'
 When Process_days <= '6' and Process_days > '3' Then '4'
 When Process_days < '10' and Process_days > '6' Then '3'
 else '2'
-end as Rating
-from KS_Sales_Data_Final_copy
----------------------------------------
+end );
