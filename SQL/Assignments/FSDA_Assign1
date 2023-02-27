@@ -1,0 +1,128 @@
+------------------------------ TASK 1 -------------------------------------
+use database Demo_database2;
+
+create or replace table shopping_history
+(
+Product varchar Not Null,
+Quantity integer Not Null,
+Unit_Price integer Not Null
+);
+
+insert into shopping_history
+values('Milk','2','10'),
+('Bread','5','12'),
+('Bread','4','8'),
+('Fruit Jam','9','7'),
+('Cheese','6','12'),
+('Buttermilk','7','3'),
+('Custard','4','6'),
+('Yogurt','5','2'),
+('Ghee','10','40'),
+('Ice Cream','20','10');
+
+select * from shopping_history;
+
+select Product,Sum(Quantity)*Sum(Unit_Price) as Total_Price 
+from shopping_history group by product; 
+
+------------------------------ TASK 2 ---------------------------------------
+
+ create or replace table KS_Phones
+ (
+ Name varchar(20) not null unique,
+ Phone_number int  not null unique
+ );
+ 
+ insert into KS_Phones
+ values('Jack','1234'),
+       ('Lena','3333'),
+       ('Mark','9999'),
+       ('Anna','7582')
+ 
+ create or replace table KS_calls
+ (
+ id int not null,
+ caller int not null,
+ callee int not null,
+ duration int not null,
+ unique(id)
+ );
+ 
+ insert into KS_calls
+ values ('25','1234','7582','8'),
+        ('7','9999','7582','1'),
+        ('18','9999','3333','4'),
+        ('2','7582','3333','3'),
+        ('3','3333','1234','1'),
+        ('21','3333','1234','1')
+        
+     
+
+select a.name from
+(select sum(t.duration)m,t.name from
+(select P.name as name,sum(duration)as duration,c.caller from KS_calls c
+inner join KS_Phones P on c.caller = p.phone_number
+group by c.caller,P.name
+union all
+select P.name as name,sum(duration)as duration,c.callee from KS_calls c
+inner join KS_Phones P on c.callee = p.phone_number
+group by c.callee,P.name)t
+group by t.name
+having  m >=10
+order by t.name)a
+
+
+--alternate solution 
+
+select * from KS_calls k inner join 
+KS_calls k1 on
+caa
+
+
+------------------------------ TASK 3 ---------------------------------------
+
+
+ create or replace table KS_Phones1
+ (
+ Name varchar(20) not null unique,
+ Phone_number int  not null unique
+ );
+ 
+
+ insert into KS_Phones1
+ values('John','6352'),
+       ('Addison','4315'),
+       ('Kate','8003'),
+       ('Ginny','9831');
+       
+       select * from KS_Phones1;
+ 
+ create or replace table KS_calls1
+ (
+ id int not null,
+ caller int not null,
+ callee int not null,
+ duration int not null,
+ unique(id)
+ );
+  
+ insert into KS_calls1
+ values ('65','8003','9831','7'),
+        ('100','9831','8003','3'),
+        ('145','4315','9831','18');
+        
+        select * from KS_Calls1;
+        
+select a.name from
+(select sum(t.duration)m,t.name from
+(select P.name as name,sum(duration)as duration,c.caller from KS_calls1 c
+inner join KS_Phones1 P on c.caller = p.phone_number
+group by c.caller,P.name
+union all
+select P.name as name,sum(duration)as duration,c.callee from KS_calls1 c
+inner join KS_Phones1 P on c.callee = p.phone_number
+group by c.callee,P.name)t
+group by t.name
+having  m >=10
+order by t.name)a
+        
